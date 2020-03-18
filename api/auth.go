@@ -1,31 +1,39 @@
-package router
+package api
 
 import (
+	"fmt"
+	"github.com/google/wire"
+	"github.com/opensourceai/go-api-service/internal/models"
+	"github.com/opensourceai/go-api-service/internal/service"
 	"github.com/opensourceai/go-api-service/middleware/jwt"
-	"github.com/opensourceai/go-api-service/models"
 	"github.com/opensourceai/go-api-service/pkg/logging"
-	"github.com/opensourceai/go-api-service/service"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-
 	"github.com/opensourceai/go-api-service/pkg/app"
 	"github.com/opensourceai/go-api-service/pkg/e"
 	"github.com/opensourceai/go-api-service/pkg/util"
 )
 
 type auth struct {
-	Username string `valid:"Required; MaxSize(50)"`
-	Password string `valid:"Required; MaxSize(50)"`
+	Username string `valid:"Required; MaxSize(50)"` // 用户名
+	Password string `valid:"Required; MaxSize(50)"` // 密码
+}
+
+type UserApi struct {
+}
+
+var ProviderAuth = wire.NewSet(NewAuthApi, service.ProviderUser)
+
+func NewAuthApi(service2 service.UserService) (*UserApi, error) {
+	userService = service2
+	return &UserApi{}, nil
 }
 
 var userService service.UserService
 
-func init() {
-	userService = new(service.UserServiceImpl)
-}
-
-func Auth(router *gin.Engine) {
+//
+func NewAuthRouter(router *gin.Engine) {
 	auth := router.Group("/auth")
 	{
 		auth.POST("/login", login)
@@ -34,9 +42,10 @@ func Auth(router *gin.Engine) {
 	group := router.Group("/auth")
 	group.Use(jwt.JWT())
 	{
-		group.POST("/test", authTest)
+		group.GET("/test", authTest)
 
 	}
+
 }
 
 // @Summary 获取认证信息
@@ -45,7 +54,6 @@ func Auth(router *gin.Engine) {
 // @Param user body auth true "user"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Security ApiKeyAuth
 // @Router /auth/login [post]
 func login(c *gin.Context) {
 	user := auth{}
@@ -56,7 +64,7 @@ func login(c *gin.Context) {
 		return
 	}
 
-	isExist, err := userService.Login(models.User{Username: user.Username, Password: user.Password})
+	userFound, isExist, err := userService.Login(models.User{Username: user.Username, Password: user.Password})
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_AUTH_CHECK_TOKEN_FAIL, nil)
 		return
@@ -67,7 +75,7 @@ func login(c *gin.Context) {
 		return
 	}
 	// 生成token
-	token, err := util.GenerateToken(user.Username, user.Password)
+	token, err := util.GenerateToken(userFound.ID, userFound.Username)
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_AUTH_TOKEN, nil)
 		return
@@ -84,7 +92,6 @@ func login(c *gin.Context) {
 // @Param user body models.User true "user"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Security ApiKeyAuth
 // @Router /auth/register [post]
 func register(c *gin.Context) {
 	user := models.User{}
@@ -109,11 +116,13 @@ func register(c *gin.Context) {
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
 // @Security ApiKeyAuth
-// @Router /auth/test [post]
+// @Router /auth/test [get]
 func authTest(c *gin.Context) {
 	query := c.Query("str")
-
+	get, _ := c.Get("username")
+	fmt.Println("get", get)
+	str := fmt.Sprintf("%s", get)
 	g := app.Gin{C: c}
-	g.Response(http.StatusOK, e.SUCCESS, "data:"+query+"(token认证通过！)")
+	g.Response(http.StatusOK, e.SUCCESS, str+query)
 
 }

@@ -8,6 +8,36 @@ definitions:
       msg:
         type: string
     type: object
+  models.Post:
+    properties:
+      board_id:
+        description: 版块ID
+        type: integer
+      content:
+        description: 内容
+        type: string
+      created_on:
+        description: 新建时间
+        type: integer
+      deleted_on:
+        description: 删除时间
+        type: integer
+      id:
+        description: ID
+        type: integer
+      modified_on:
+        description: 修改时间
+        type: integer
+      summary:
+        description: 摘要
+        type: string
+      title:
+        description: 标题
+        type: string
+      user_id:
+        description: 用户ID
+        type: integer
+    type: object
   models.User:
     properties:
       avatar_src:
@@ -17,8 +47,10 @@ definitions:
         description: 公司
         type: string
       created_on:
+        description: 新建时间
         type: integer
       deleted_on:
+        description: 删除时间
         type: integer
       description:
         description: 描述
@@ -27,8 +59,10 @@ definitions:
         description: 电子邮件
         type: string
       id:
+        description: ID
         type: integer
       modified_on:
+        description: 修改时间
         type: integer
       name:
         description: 昵称
@@ -49,12 +83,37 @@ definitions:
         description: 网站
         type: string
     type: object
+  page.Page:
+    properties:
+      order_by:
+        description: 排序字段
+        type: string
+      page:
+        description: 页数
+        type: integer
+      size:
+        description: 条数
+        type: integer
+      sorter:
+        description: 升序, 降序
+        type: string
+    type: object
   router.auth:
     properties:
       password:
+        description: 密码
         type: string
       username:
+        description: 用户名
         type: string
+    type: object
+  v1.postIds:
+    properties:
+      ids:
+        description: 帖子IDs
+        items:
+          type: integer
+        type: array
     type: object
 info:
   contact: {}
@@ -84,11 +143,9 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/app.Response'
-      security:
-        - ApiKeyAuth: []
-      summary: 获取认证信息11
+      summary: 获取认证信息
       tags:
-        - Auth
+      - Auth
   /auth/register:
     post:
       parameters:
@@ -99,7 +156,7 @@ paths:
         schema:
           $ref: '#/definitions/models.User'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -109,13 +166,11 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/app.Response'
-      security:
-        - ApiKeyAuth: []
       summary: 添加用户
       tags:
-        - Auth
+      - Auth
   /auth/test:
-    post:
+    get:
       parameters:
         - description: string
           in: query
@@ -138,6 +193,215 @@ paths:
       summary: auth测试
       tags:
         - Auth
+  /v1/board:
+    get:
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: 获取全部版块列表信息
+      tags:
+        - Board
+  /v1/board/{id}:
+    get:
+      parameters:
+        - description: id
+          in: path
+          name: id
+          required: true
+          type: string
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: 获取某版块信息
+      tags:
+        - Board
+  /v1/board/{id}/posts:
+    get:
+      parameters:
+        - description: id
+          in: path
+          name: id
+          required: true
+          type: string
+        - description: 页数
+          in: query
+          name: page
+          type: integer
+        - description: 条数
+          in: query
+          name: size
+          type: integer
+        - description: 排序字段
+          in: query
+          name: order_by
+          type: string
+        - description: 升序, 降序
+          in: query
+          name: sorter
+          type: string
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: 获取某版块的帖子
+      tags:
+        - Board
+  /v1/post:
+    delete:
+      parameters:
+        - description: postIds
+          in: body
+          name: postIds
+          required: true
+          schema:
+            $ref: '#/definitions/v1.postIds'
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+        - ApiKeyAuth: []
+      summary: 删除用户帖子
+      tags:
+        - Post
+    get:
+      parameters:
+        - description: pageNum
+          in: query
+          name: page
+          required: true
+          type: string
+        - description: pageSize
+          in: query
+          name: size
+          required: true
+          type: string
+        - description: orderBy
+          in: query
+          name: orderBy
+          type: string
+        - description: sorter
+          in: query
+          name: sorter
+          type: string
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+        - ApiKeyAuth: []
+      summary: 获取用户自身帖子
+      tags:
+        - Post
+    post:
+      parameters:
+        - description: post
+          in: body
+          name: post
+          required: true
+          schema:
+            $ref: '#/definitions/models.Post'
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+        - ApiKeyAuth: []
+      summary: 新增帖子
+      tags:
+        - Post
+    put:
+      parameters:
+        - description: post
+          in: body
+          name: post
+          required: true
+          schema:
+            $ref: '#/definitions/models.Post'
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+        - ApiKeyAuth: []
+      summary: 修改用户自身帖子
+      tags:
+        - Post
+  /v1/post/{id}:
+    get:
+      parameters:
+        - description: id
+          in: path
+          name: id
+          required: true
+          type: string
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+        - ApiKeyAuth: []
+      summary: 获取帖子信息
+      tags:
+        - Post
 securityDefinitions:
   ApiKeyAuth:
     in: Header
