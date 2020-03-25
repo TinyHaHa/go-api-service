@@ -1,4 +1,13 @@
 definitions:
+  api.auth:
+    properties:
+      password:
+        description: 密码
+        type: string
+      username:
+        description: 用户名
+        type: string
+    type: object
   app.Response:
     properties:
       code:
@@ -98,15 +107,6 @@ definitions:
         description: 升序, 降序
         type: string
     type: object
-  router.auth:
-    properties:
-      password:
-        description: 密码
-        type: string
-      username:
-        description: 用户名
-        type: string
-    type: object
   v1.postIds:
     properties:
       ids:
@@ -131,7 +131,7 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/router.auth'
+          $ref: '#/definitions/api.auth'
       produces:
       - application/json
       responses:
@@ -172,13 +172,13 @@ paths:
   /auth/test:
     get:
       parameters:
-        - description: string
-          in: query
-          name: str
-          required: true
-          type: string
+      - description: string
+        in: query
+        name: str
+        required: true
+        type: string
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -189,14 +189,37 @@ paths:
           schema:
             $ref: '#/definitions/app.Response'
       security:
-        - ApiKeyAuth: []
+      - ApiKeyAuth: []
       summary: auth测试
       tags:
-        - Auth
-  /v1/board:
+      - Auth
+  /auth/updatePwd:
+    post:
+      parameters:
+      - description: user
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: 用户密码修改
+      tags:
+      - Auth
+  /v1/broad:
     get:
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -208,17 +231,17 @@ paths:
             $ref: '#/definitions/app.Response'
       summary: 获取全部版块列表信息
       tags:
-        - Board
-  /v1/board/{id}:
+      - Board
+  /v1/broad/{id}:
     get:
       parameters:
-        - description: id
-          in: path
-          name: id
-          required: true
-          type: string
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -230,33 +253,33 @@ paths:
             $ref: '#/definitions/app.Response'
       summary: 获取某版块信息
       tags:
-        - Board
-  /v1/board/{id}/posts:
+      - Board
+  /v1/broad/{id}/posts:
     get:
       parameters:
-        - description: id
-          in: path
-          name: id
-          required: true
-          type: string
-        - description: 页数
-          in: query
-          name: page
-          type: integer
-        - description: 条数
-          in: query
-          name: size
-          type: integer
-        - description: 排序字段
-          in: query
-          name: order_by
-          type: string
-        - description: 升序, 降序
-          in: query
-          name: sorter
-          type: string
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 页数
+        in: query
+        name: page
+        type: integer
+      - description: 条数
+        in: query
+        name: size
+        type: integer
+      - description: 排序字段
+        in: query
+        name: order_by
+        type: string
+      - description: 升序, 降序
+        in: query
+        name: sorter
+        type: string
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -268,18 +291,18 @@ paths:
             $ref: '#/definitions/app.Response'
       summary: 获取某版块的帖子
       tags:
-        - Board
+      - Board
   /v1/post:
     delete:
       parameters:
-        - description: postIds
-          in: body
-          name: postIds
-          required: true
-          schema:
-            $ref: '#/definitions/v1.postIds'
+      - description: postIds
+        in: body
+        name: postIds
+        required: true
+        schema:
+          $ref: '#/definitions/v1.postIds'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -290,32 +313,32 @@ paths:
           schema:
             $ref: '#/definitions/app.Response'
       security:
-        - ApiKeyAuth: []
+      - ApiKeyAuth: []
       summary: 删除用户帖子
       tags:
-        - Post
+      - Post
     get:
       parameters:
-        - description: pageNum
-          in: query
-          name: page
-          required: true
-          type: string
-        - description: pageSize
-          in: query
-          name: size
-          required: true
-          type: string
-        - description: orderBy
-          in: query
-          name: orderBy
-          type: string
-        - description: sorter
-          in: query
-          name: sorter
-          type: string
+      - description: pageNum
+        in: query
+        name: page
+        required: true
+        type: string
+      - description: pageSize
+        in: query
+        name: size
+        required: true
+        type: string
+      - description: orderBy
+        in: query
+        name: orderBy
+        type: string
+      - description: sorter
+        in: query
+        name: sorter
+        type: string
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -326,20 +349,20 @@ paths:
           schema:
             $ref: '#/definitions/app.Response'
       security:
-        - ApiKeyAuth: []
+      - ApiKeyAuth: []
       summary: 获取用户自身帖子
       tags:
-        - Post
+      - Post
     post:
       parameters:
-        - description: post
-          in: body
-          name: post
-          required: true
-          schema:
-            $ref: '#/definitions/models.Post'
+      - description: post
+        in: body
+        name: post
+        required: true
+        schema:
+          $ref: '#/definitions/models.Post'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -350,20 +373,20 @@ paths:
           schema:
             $ref: '#/definitions/app.Response'
       security:
-        - ApiKeyAuth: []
+      - ApiKeyAuth: []
       summary: 新增帖子
       tags:
-        - Post
+      - Post
     put:
       parameters:
-        - description: post
-          in: body
-          name: post
-          required: true
-          schema:
-            $ref: '#/definitions/models.Post'
+      - description: post
+        in: body
+        name: post
+        required: true
+        schema:
+          $ref: '#/definitions/models.Post'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -374,20 +397,20 @@ paths:
           schema:
             $ref: '#/definitions/app.Response'
       security:
-        - ApiKeyAuth: []
+      - ApiKeyAuth: []
       summary: 修改用户自身帖子
       tags:
-        - Post
+      - Post
   /v1/post/{id}:
     get:
       parameters:
-        - description: id
-          in: path
-          name: id
-          required: true
-          type: string
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -398,10 +421,10 @@ paths:
           schema:
             $ref: '#/definitions/app.Response'
       security:
-        - ApiKeyAuth: []
+      - ApiKeyAuth: []
       summary: 获取帖子信息
       tags:
-        - Post
+      - Post
 securityDefinitions:
   ApiKeyAuth:
     in: Header
