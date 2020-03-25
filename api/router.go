@@ -37,6 +37,8 @@ func NewApi() *gin.Engine {
 	v1.NewBoardRouter(r)
 	// 主题
 	v1.NewPostRouter(r)
+	// 用户
+	v1.NewUserRouter(r)
 
 	return r
 }

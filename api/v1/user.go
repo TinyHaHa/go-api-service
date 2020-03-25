@@ -31,7 +31,7 @@ func NewUserRouter(router *gin.Engine){
 	user := router.Group("/v1/user")
 	{
 		user.PUT("/update-pwd",updatePwd)
-		user.PUT("update-message",updateMsg)
+		user.PUT("/update-message",updateMsg)
 	}
 }
 
@@ -41,7 +41,7 @@ func NewUserRouter(router *gin.Engine){
 // @Param user body models.User true "user"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /auth/update-pwd [post]
+// @Router /v1/user/update-pwd [put]
 func updatePwd(c *gin.Context){
 	user := models.User{}
 	//var newPwd string
@@ -61,6 +61,13 @@ func updatePwd(c *gin.Context){
 
 }
 
+// @Summary 用户信息修改
+// @Tags User
+// @Produce  json
+// @Param user body models.User true "user"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /v1/user/update-message [put]
 func updateMsg(c *gin.Context){
 	user := models.User{}
 

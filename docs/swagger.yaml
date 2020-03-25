@@ -193,29 +193,6 @@ paths:
       summary: auth测试
       tags:
       - Auth
-  /auth/updatePwd:
-    post:
-      parameters:
-      - description: user
-        in: body
-        name: user
-        required: true
-        schema:
-          $ref: '#/definitions/models.User'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/app.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/app.Response'
-      summary: 用户密码修改
-      tags:
-      - Auth
   /v1/broad:
     get:
       produces:
@@ -425,6 +402,52 @@ paths:
       summary: 获取帖子信息
       tags:
       - Post
+  /v1/user/update-message:
+    put:
+      parameters:
+      - description: user
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: 用户信息修改
+      tags:
+      - User
+  /v1/user/update-pwd:
+    put:
+      parameters:
+      - description: user
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: 用户密码修改
+      tags:
+      - User
 securityDefinitions:
   ApiKeyAuth:
     in: Header
