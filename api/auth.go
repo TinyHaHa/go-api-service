@@ -23,7 +23,7 @@ type auth struct {
 type AuthApi struct {
 }
 
-var ProviderAuth = wire.NewSet(NewAuthApi, service.ProviderUser)
+var ProviderAuth = wire.NewSet(NewAuthApi)
 
 func NewAuthApi(service2 service.UserService) (*AuthApi, error) {
 	userService = service2
