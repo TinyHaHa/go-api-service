@@ -41,11 +41,6 @@ type UserService interface {
 	// 用户登录
 	ServiceLogin(user models.User) (*models.User, bool, error)
 	// 修改用户密码
-	// Deprecated: 接口重复
-	ServiceUpdatePwd(username string, s string) error
-	// 修改用户信息
-	// Deprecated: 接口重复
-	ServiceUpdateMsg(username string, user *models.User) error
 	// 修改用户信息
 	ServiceUpdateUser(onlineUser *app.Auth, user *dto.UserDTO) (err error)
 }

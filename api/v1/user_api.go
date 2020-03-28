@@ -77,3 +77,4 @@ func updateUser(context *gin.Context) {
 
 	appG.Success(nil)
 }
+
